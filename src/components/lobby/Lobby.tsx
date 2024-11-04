@@ -5,6 +5,9 @@ import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 
+// Enable this for Discord integration
+// import { useDiscord } from "@/hooks/useDiscord";
+
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
   const {
@@ -19,6 +22,9 @@ export const Lobby = () => {
     isSynonym,
     error,
   } = useGameSocket();
+
+  // Enable this for Discord integration
+  // const { username, channelName } = useDiscord();
 
   const handleCreateGame = () => {
     // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
@@ -35,6 +41,9 @@ export const Lobby = () => {
       Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
+          {/* Enable this for Discord integration */}
+          {/* <div className="my-2 text-white">Activity Channel: {channelName}</div>
+          <div className="my-2 text-white">User: {username}</div> */}
           <button
             onClick={handleCreateGame}
             className="bg-green-500 w-full text-white py-2 px-4 rounded"
@@ -61,14 +70,12 @@ export const Lobby = () => {
           {error && <p className="text-red-500">{error}</p>}
         </div>
       )}
-
       {gameCode && !isGameStarted && (
         <p className="text-xl font-semibold text-white">
           Waiting for the second player... Game Code:{" "}
           <span className="text-amber-500">{gameCode}</span>
         </p>
       )}
-
       {isGameStarted && (
         <>
           <Game
