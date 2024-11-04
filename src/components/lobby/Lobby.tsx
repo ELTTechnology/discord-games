@@ -5,8 +5,9 @@ import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 
-// Enable this for Discord integration
+// Toggle this for Discord integration
 // import { useDiscord } from "@/hooks/useDiscord";
+// import { sleep } from "@/utils/sleep";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
@@ -23,14 +24,23 @@ export const Lobby = () => {
     error,
   } = useGameSocket();
 
-  // Enable this for Discord integration
-  // const { username, channelName } = useDiscord();
+  // Toggle this for Discord integration
+  // const { username, channelName, exitDiscordActivity } = useDiscord();
 
   const handleCreateGame = () => {
     // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
     const code = nanoid(5).toUpperCase();
     createGame(code);
   };
+
+  const endGame = async () => {
+    // Disconnect game session
+    leaveGame();
+    // Toggle this for Discord integration
+    // Leave Discord Activity
+    // await sleep(320);
+    // exitDiscordActivity();
+  }
 
   const handleJoinGame = () => {
     joinGame(inputCode);
@@ -41,7 +51,7 @@ export const Lobby = () => {
       Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
-          {/* Enable this for Discord integration */}
+          {/* Toggle this for Discord integration */}
           {/* <div className="my-2 text-white">Activity Channel: {channelName}</div>
           <div className="my-2 text-white">User: {username}</div> */}
           <button
@@ -82,7 +92,7 @@ export const Lobby = () => {
             key={gameCode}
             data={[...data].slice(0, 5)}
             sendAction={sendAction}
-            leaveGame={leaveGame}
+            endGame={endGame}
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}

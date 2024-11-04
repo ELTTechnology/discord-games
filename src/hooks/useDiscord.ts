@@ -31,6 +31,11 @@ export const useDiscord = () => {
     setChannelName(activityChannelName);
   };
 
+  const exitDiscordActivity = async () => {
+    if (!discordSDK) return;
+    await discordSDK.close(1000, "Game completed");
+  }
+
   const setupDiscordSDK = async () => {
     if (!discordSDK) return;
     console.log("Discord SDK is connecting...");
@@ -93,5 +98,6 @@ export const useDiscord = () => {
     auth,
     username,
     channelName,
+    exitDiscordActivity,
   };
 };
