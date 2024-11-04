@@ -4,6 +4,7 @@ import useGameSocket from "@/hooks/useGameSocket";
 import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
+import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 
 // Toggle this for Discord integration
 // import { useDiscord } from "@/hooks/useDiscord";
@@ -80,12 +81,9 @@ export const Lobby = () => {
           {error && <p className="text-red-500">{error}</p>}
         </div>
       )}
-      {gameCode && !isGameStarted && (
-        <p className="text-xl font-semibold text-white">
-          Waiting for the second player... Game Code:{" "}
-          <span className="text-amber-500">{gameCode}</span>
-        </p>
-      )}
+
+      {gameCode && !isGameStarted && (<WaitingForOtherPlayer gameCode={gameCode} />)}
+
       {isGameStarted && (
         <>
           <Game
