@@ -5,6 +5,7 @@ export const useDiscord = () => {
   const [channelName, setChannelName] = useState("Unknown");
   const [discordSDK, setDiscordSDK] = useState<DiscordSDK>();
   const [auth, setAuth] = useState<any>();
+  const [username, setUsername] = useState("")
   const [clientId] = useState(process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "");
 
   const appendVoiceChannelName = async () => {
@@ -65,6 +66,8 @@ export const useDiscord = () => {
       access_token,
     });
 
+    setUsername(authResponse.user.global_name || authResponse.user.username);
+
     console.log(" authResponse: ", authResponse);
 
     setAuth(authResponse);
@@ -88,6 +91,7 @@ export const useDiscord = () => {
 
   return {
     auth,
+    username,
     channelName,
   };
 };

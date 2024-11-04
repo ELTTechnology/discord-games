@@ -21,7 +21,7 @@ export const Lobby = () => {
     error,
   } = useGameSocket();
 
-  const { channelName } = useDiscord();
+  const { username, channelName } = useDiscord();
 
   const handleCreateGame = () => {
     // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
@@ -39,6 +39,7 @@ export const Lobby = () => {
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           <div className="my-2 text-white">Activity Channel: {channelName}</div>
+          <div className="my-2 text-white">User: {username}</div>
           <button
             onClick={handleCreateGame}
             className="bg-green-500 w-full text-white py-2 px-4 rounded"
