@@ -12,7 +12,7 @@ import { Lose } from "./Lose";
 interface Props {
   data: Data[];
   sendAction: (data: TileData) => void;
-  leaveGame: () => void;
+  endGame: () => void;
   opponentAction: TileData | null;
   playerNumber: number | undefined;
   isSynonym: boolean;
@@ -53,7 +53,7 @@ const cols = [0, 4, 8, 12];
 export const Game = ({
   data,
   sendAction,
-  leaveGame,
+  endGame,
   opponentAction,
   isSynonym,
 }: Props) => {
@@ -157,7 +157,7 @@ export const Game = ({
   const onAnimationEnd = async () => {
     console.log(" --------- onAnimationEnd ");
     await sleep(1920);
-    leaveGame();
+    endGame();
   }
 
   const isSelected = (data: TileData) => {
