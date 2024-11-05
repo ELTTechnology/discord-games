@@ -14,6 +14,8 @@ interface ExtendedNextApiResponse extends NextApiResponse {
 
 const games: any = {};
 
+const gameCodes: string[] = [];
+
 export default function handler(req: NextApiRequest, res: ExtendedNextApiResponse) {
   if (!res.socket.server.io) {
     const io = new IOServer(res.socket.server, {
@@ -33,6 +35,25 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
     io.on('connection', (socket) => {
       console.log('New player connected:', socket.id);
 
+      const autoJoinAvailableGame = () => {
+        console.log(" --------- autoJoinAvailableGame --------- ");
+        gameCodes.forEach(async (gameCode) => {
+          const room = io.sockets.adapter.rooms.get(gameCode);
+          const sockets = await io.in(gameCode).fetchSockets();
+          console.log("socket.id: ", socket.id);
+          console.log("sockets: ", sockets);
+          if (room && room.size === 1 && !sockets.find((s) => s.id === socket.id)) {
+            socket.join(gameCode);
+            console.log(`${socket.id} joined game room ${gameCode}`);
+            socket.emit('gameJoined', gameCode, games[gameCode as string].player2);
+            io.to(gameCode).emit('startGame');  // Notify both players to start the game
+          }
+        });
+      }
+
+      // Check if same user is already in a game room
+      if (gameCodes.length > 0) autoJoinAvailableGame();
+
       socket.on('connect_error', (err) => {
         console.error('Connection error:', err);
       });
@@ -42,6 +63,7 @@ export default function handler(req: NextApiRequest, res: ExtendedNextApiRespons
         socket.join(gameCode);
         games[gameCode as string] = { gameCode: gameCode, player1: isSynonym, player2: !isSynonym };
         console.log(`Game room ${gameCode} created by ${socket.id}`);
+        gameCodes.push(gameCode);
         socket.emit('gameCreated', gameCode);
       });
 

@@ -13,7 +13,7 @@ let socket: Socket | undefined;
 //   `${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`
 // );
 
-const useGameSocket = () => {
+const useGameSocket = (sessionId: string) => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,6 +22,7 @@ const useGameSocket = () => {
   const [isSynonym, setIsSynonym] = useState(false);
 
   useEffect(() => {
+    console.log(" --------- useGameSocket > useEffect --------- ");
     if (!socket) {
       // replace the URL w/ the deployed Web Sockets server
       // or use envi variable and make the URL dynamic
@@ -34,8 +35,9 @@ const useGameSocket = () => {
       });
     }
 
+    console.log(" --------- useGameSocket > socket connect --------- ");
     socket.on("connect", () => {
-      console.log("Connected to server: ", socket);
+      console.log("Connected to server: ", socket, " with session ID: ", sessionId);
     });
 
     socket.on("gameCreated", (code: string) => {
