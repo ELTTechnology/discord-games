@@ -10,21 +10,18 @@ interface Prop {
   result: SelectionResult;
   isAnimating: boolean;
   animationEnd: () => void;
+  isDisabled: boolean;
 }
 
 export const Tile = ({
   data,
-  selectedWords,
   onSelect,
   isSelected,
   result,
   isAnimating,
   animationEnd,
+  isDisabled,
 }: Prop) => {
-
-  if (data.word === "bright") console.log(" --------- Tile: bright > selectedWords.includes(data): ", selectedWords.includes(data));
-  if (data.word === "bright") console.log(" --------- Tile: bright > selectedWords[0]: ", selectedWords[0]);
-  if (data.word === "bright") console.log(" --------- Tile: bright > data: ", data);
 
   const bgColor = () => {
     switch (result) {
@@ -65,7 +62,7 @@ export const Tile = ({
       //   onLayoutAnimationStart={() => console.log('onLayoutAnimationStart')}
       //   onLayoutAnimationComplete={() => console.log('onLayoutAnimationComplete')}
       onAnimationEnd={animationEnd}
-      disabled={isAnimating}
+      disabled={isAnimating || isDisabled}
     >
       {data.word}
     </motion.button>

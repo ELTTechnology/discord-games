@@ -56,6 +56,7 @@ export const Game = ({
   endGame,
   opponentAction,
   isSynonym,
+  playerNumber,
 }: Props) => {
 
   const [cinnamonSquares, setCinnamonSquares] = useState(
@@ -65,8 +66,9 @@ export const Game = ({
   const [result, setResult] = useState<SelectionResult>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [synonymsAnswered, setSynonymsAnswered] = useState(0);
-  const [antonymsAnswered, setAnyonymsAnswered] = useState(0);
+  const [antonymsAnswered, setAntonymsAnswered] = useState(0);
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
+  const [tileState, setTileState] = useState<boolean>(playerNumber === 2);
 
   useEffect(() => {
     (async () => {
@@ -92,6 +94,7 @@ export const Game = ({
     } else {
       setSelectedWords((prev) => [...prev, data]);
     }
+    setTileState(!tileState);
   };
 
   const evaluate = async () => {
@@ -101,6 +104,7 @@ export const Game = ({
       setSynonymsAnswered(synonymsAnswered + 1);
       await sleep(560);
       setIsAnimating(true);
+      setTileState(!isSynonym);
       hideWord([
         selectedWords[0].word,
         selectedWords[0].synonym ?? "",
@@ -115,9 +119,10 @@ export const Game = ({
     ) {
       console.log(" evaluate > antonym ");
       setResult("antonyms");
-      setAnyonymsAnswered(antonymsAnswered + 1);
+      setAntonymsAnswered(antonymsAnswered + 1);
       await sleep(560);
       setIsAnimating(true);
+      setTileState(isSynonym);
       hideWord([
         selectedWords[0].word,
         selectedWords[0].synonym ?? "",
@@ -130,6 +135,7 @@ export const Game = ({
       console.log(" evaluate > incorrect ");
       await sleep(120);
       setIsAnimating(true);
+      setTileState(!!tileState);
       setResult("error");
     }
     await sleep(960);
@@ -196,6 +202,7 @@ export const Game = ({
                     result={result}
                     isAnimating={isAnimating}
                     animationEnd={() => setIsAnimating(false)}
+                    isDisabled={tileState}
                   />
                 ) : null
               )}
