@@ -76,8 +76,8 @@ export const Game = ({
     (async () => {
       await sleep(10000);
       setInstructionsOpen(false);
-    })()
-  }, [])
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -187,11 +187,10 @@ export const Game = ({
 
   return (
     <div className="min-w-[320px] w-[500px]">
-      <Modal
-        title="Instructions"
-        isOpen={instructionsOpen}
-      >
-        <Instructions />
+      <Modal title="Instructions" isOpen={instructionsOpen}>
+        <div>
+          <Instructions autoclose />
+        </div>
       </Modal>
       <div className="my-2 text-white">
         Select{" "}
