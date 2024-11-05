@@ -5,6 +5,7 @@ import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
+// import { random } from "lodash";
 
 // Toggle this for Discord integration
 // import { useDiscord } from "@/hooks/useDiscord";
@@ -12,6 +13,8 @@ import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
+  // Generate specific session/user ID
+  const [sessionId] = useState(nanoid(9));
   const {
     createGame,
     joinGame,
@@ -23,7 +26,7 @@ export const Lobby = () => {
     playerNumber,
     isSynonym,
     error,
-  } = useGameSocket();
+  } = useGameSocket(sessionId);
 
   // Toggle this for Discord integration
   // const { username, channelName, exitDiscordActivity } = useDiscord();
@@ -41,7 +44,7 @@ export const Lobby = () => {
     // Leave Discord Activity
     // await sleep(320);
     // exitDiscordActivity();
-  }
+  };
 
   const handleJoinGame = () => {
     joinGame(inputCode);
@@ -88,6 +91,10 @@ export const Lobby = () => {
         <>
           <Game
             key={gameCode}
+            // data={(() => {
+            //   const randomNumber = random(0, data.length - 5);
+            //   return [...data].slice(randomNumber, randomNumber + 5);
+            // })()}
             data={[...data].slice(0, 5)}
             sendAction={sendAction}
             endGame={endGame}

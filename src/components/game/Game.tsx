@@ -8,6 +8,8 @@ import { sleep } from "../../utils/sleep";
 import "./game.styles.css";
 import { Won } from "./Won";
 import { Lose } from "./Lose";
+import { Modal } from "../modal/Modal";
+import { Instructions } from "../instructions/Instructions";
 
 interface Props {
   data: Data[];
@@ -58,7 +60,6 @@ export const Game = ({
   isSynonym,
   playerNumber,
 }: Props) => {
-
   const [cinnamonSquares, setCinnamonSquares] = useState(
     shuffle(createCinnamonSquares(data))
   );
@@ -69,6 +70,14 @@ export const Game = ({
   const [antonymsAnswered, setAntonymsAnswered] = useState(0);
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
   const [tileState, setTileState] = useState<boolean>(playerNumber === 2);
+  const [instructionsOpen, setInstructionsOpen] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      await sleep(10000);
+      setInstructionsOpen(false);
+    })()
+  }, [])
 
   useEffect(() => {
     (async () => {
@@ -164,26 +173,38 @@ export const Game = ({
     console.log(" --------- onAnimationEnd ");
     await sleep(1920);
     endGame();
-  }
+  };
 
   const isSelected = (data: TileData) => {
     return selectedWords.some((word) => word.word === data.word);
   };
 
   if (isWinner === true) {
-    return (<Won onAnimationEnd={onAnimationEnd} />)
+    return <Won onAnimationEnd={onAnimationEnd} />;
   } else if (isWinner === false) {
-    return (<Lose onAnimationEnd={onAnimationEnd} />)
+    return <Lose onAnimationEnd={onAnimationEnd} />;
   }
 
   return (
     <div className="min-w-[320px] w-[500px]">
+      <Modal
+        title="Instructions"
+        isOpen={instructionsOpen}
+      >
+        <Instructions />
+      </Modal>
       <div className="my-2 text-white">
-        Select {isSynonym ? `synonyms! (${synonymsAnswered})` : `antonyms! (${antonymsAnswered})`}
+        Select{" "}
+        {isSynonym
+          ? `synonyms! (${synonymsAnswered})`
+          : `antonyms! (${antonymsAnswered})`}
       </div>
       <div className="flex flex-row gap-2">
         {cols.map((col) => (
-          <div key={col} className="w-[120px] h-[504px] flex flex-col gap-2">
+          <div
+            key={col}
+            className="w-[120px] h-[504px] flex flex-col-reverse gap-2"
+          >
             <AnimatePresence
               onExitComplete={() => setIsAnimating(false)}
               presenceAffectsLayout={true}
