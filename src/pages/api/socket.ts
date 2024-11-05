@@ -33,30 +33,32 @@ export default function handler(
     });
     res.socket.server.io = io;
 
-    console.log("Socket.io established");
+    console.log(" 🔌 Socket.io established ✅ ");
 
     io.on("connection", (socket) => {
-      console.log("New player connected:", socket.id);
+      console.log(" 🧑🏽‍💻 New player connected:", socket.id);
 
       const onNoGameFound = () => {
-        console.log(" --------- onNoGameFound --------- ");
+        console.log(" ❌ NO GAME FOUND ❌ ");
         socket.emit("noGameFound");
       };
 
       const autoJoinAvailableGame = () => {
-        console.log(" --------- autoJoinAvailableGame --------- ");
+        console.log(" 🔎 AUTO JOIN AVAILABLE GAME 🔍 ");
         gameCodes.forEach(async (gameCode, index) => {
           const room = io.sockets.adapter.rooms.get(gameCode);
           const sockets = await io.in(gameCode).fetchSockets();
-          console.log("socket.id: ", socket.id);
-          console.log("sockets: ", sockets);
+          console.log(" 🧑🏽‍💻 socket.id: ", socket.id);
+          console.log(" 🔢 sockets.length: ", sockets.length);
+          console.log(" 📋 sockets ids: ", sockets.map(s => s.id).join(" / "));
           if (
             room &&
             room.size === 1 &&
             !sockets.find((s) => s.id === socket.id)
           ) {
+            console.log(" 🎮 Game room available 🔎: ", gameCode);
             socket.join(gameCode);
-            console.log(`${socket.id} joined game room ${gameCode}`);
+            console.log(` 🧑🏽‍💻 ${socket.id} joined game room 🎮 ${gameCode}`);
             socket.emit(
               "gameJoined",
               gameCode,
@@ -79,7 +81,7 @@ export default function handler(
       }
 
       socket.on("connect_error", (err) => {
-        console.error("Connection error:", err);
+        console.error(" ❌ Connection error:", err);
       });
 
       // Create a game room
@@ -90,7 +92,7 @@ export default function handler(
           player1: isSynonym,
           player2: !isSynonym,
         };
-        console.log(`Game room ${gameCode} created by ${socket.id}`);
+        console.log(`Game room 🎮 ${gameCode} created by 🧑🏽‍💻 ${socket.id}`);
         gameCodes.push(gameCode);
         socket.emit("gameCreated", gameCode);
       });
@@ -100,7 +102,7 @@ export default function handler(
         const room = io.sockets.adapter.rooms.get(gameCode);
         if (room && room.size === 1) {
           socket.join(gameCode);
-          console.log(`${socket.id} joined game room ${gameCode}`);
+          console.log(` 🧑🏽‍💻 ${socket.id} joined game room 🎮 ${gameCode}`);
           socket.emit(
             "gameJoined",
             gameCode,
@@ -120,19 +122,19 @@ export default function handler(
       );
 
       socket.on("leave", (gameCode: string) => {
-        console.log("Player left > socket.id:", socket.id);
+        console.log(" 🧑🏽‍💻 Player left > socket.id:", socket.id);
         io.socketsLeave(gameCode);
       });
 
       socket.on("disconnect", (gameCode: string) => {
-        console.log("Player disconnected:", socket.id);
+        console.log(" 🧑🏽‍💻 Player disconnected 🔌 :", socket.id);
         // const room = io.sockets.adapter.rooms.get(gameCode);
         // io.to(gameCode).emit('');
         socket.leave(gameCode);
       });
     });
   } else {
-    console.log("Socket.io server already running");
+    console.log(" 🔌 Socket.io server already running 🏃🏽 ");
   }
   res.end();
 }
