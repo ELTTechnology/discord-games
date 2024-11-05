@@ -1,4 +1,5 @@
 import { TileData } from "@/components/game/types";
+import { sleep } from "@/utils/sleep";
 import { random } from "lodash";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
@@ -64,7 +65,8 @@ const useGameSocket = (sessionId: string) => {
       setOpponentAction(data);
     });
 
-    socket.on("noGameFound", () => {
+    socket.on("noGameFound", async () => {
+      await sleep(960)
       setIsSearchingGame(false);
     });
 
