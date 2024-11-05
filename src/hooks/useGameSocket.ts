@@ -1,4 +1,5 @@
 import { TileData } from "@/components/game/types";
+import { sleep } from "@/utils/sleep";
 import { random } from "lodash";
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
@@ -13,15 +14,17 @@ let socket: Socket | undefined;
 //   `${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`
 // );
 
-const useGameSocket = () => {
+const useGameSocket = (sessionId: string) => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isSearchingGame, setIsSearchingGame] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [opponentAction, setOpponentAction] = useState<TileData | null>(null);
   const [playerNumber, setPlayerNumber] = useState<1 | 2>();
   const [isSynonym, setIsSynonym] = useState(false);
 
   useEffect(() => {
+    console.log(" --------- useGameSocket > useEffect --------- ");
     if (!socket) {
       // replace the URL w/ the deployed Web Sockets server
       // or use envi variable and make the URL dynamic
@@ -34,8 +37,14 @@ const useGameSocket = () => {
       });
     }
 
+    console.log(" --------- useGameSocket > socket connect --------- ");
     socket.on("connect", () => {
-      console.log("Connected to server: ", socket);
+      console.log(
+        "Connected to server: ",
+        socket,
+        " with session ID: ",
+        sessionId
+      );
     });
 
     socket.on("gameCreated", (code: string) => {
@@ -54,6 +63,11 @@ const useGameSocket = () => {
     socket.on("opponentAction", (data: TileData, player) => {
       if (player === playerNumber) return;
       setOpponentAction(data);
+    });
+
+    socket.on("noGameFound", async () => {
+      await sleep(960)
+      setIsSearchingGame(false);
     });
 
     socket.on("error", (msg: string) => {
@@ -113,6 +127,7 @@ const useGameSocket = () => {
     disconnect,
     leaveGame,
     isGameStarted,
+    isSearchingGame,
     opponentAction,
     playerNumber,
     isSynonym,

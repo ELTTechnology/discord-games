@@ -5,6 +5,8 @@ import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
+import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
+// import { random } from "lodash";
 
 // Toggle this for Discord integration
 // import { useDiscord } from "@/hooks/useDiscord";
@@ -12,6 +14,8 @@ import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
+  // Generate specific session/user ID
+  const [sessionId] = useState(nanoid(9));
   const {
     createGame,
     joinGame,
@@ -19,11 +23,12 @@ export const Lobby = () => {
     leaveGame,
     gameCode,
     isGameStarted,
+    isSearchingGame,
     opponentAction,
     playerNumber,
     isSynonym,
     error,
-  } = useGameSocket();
+  } = useGameSocket(sessionId);
 
   // Toggle this for Discord integration
   // const { username, channelName, exitDiscordActivity } = useDiscord();
@@ -41,7 +46,7 @@ export const Lobby = () => {
     // Leave Discord Activity
     // await sleep(320);
     // exitDiscordActivity();
-  }
+  };
 
   const handleJoinGame = () => {
     joinGame(inputCode);
@@ -49,6 +54,10 @@ export const Lobby = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
+      <LoadingOverlay
+        isOpen={isSearchingGame && !isGameStarted}
+        loadingText="Searching for a game ... "
+      />
       Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
@@ -81,13 +90,17 @@ export const Lobby = () => {
           {error && <p className="text-red-500">{error}</p>}
         </div>
       )}
-
-      {gameCode && !isGameStarted && (<WaitingForOtherPlayer gameCode={gameCode} />)}
-
+      {gameCode && !isGameStarted && (
+        <WaitingForOtherPlayer gameCode={gameCode} />
+      )}
       {isGameStarted && (
         <>
           <Game
             key={gameCode}
+            // data={(() => {
+            //   const randomNumber = random(0, data.length - 5);
+            //   return [...data].slice(randomNumber, randomNumber + 5);
+            // })()}
             data={[...data].slice(0, 5)}
             sendAction={sendAction}
             endGame={endGame}
