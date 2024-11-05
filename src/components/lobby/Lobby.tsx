@@ -9,7 +9,7 @@ import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
 // import { random } from "lodash";
 
 // Toggle this for Discord integration
-// import { useDiscord } from "@/hooks/useDiscord";
+import { useDiscord } from "@/hooks/useDiscord";
 // import { sleep } from "@/utils/sleep";
 
 export const Lobby = () => {
@@ -31,10 +31,9 @@ export const Lobby = () => {
   } = useGameSocket(sessionId);
 
   // Toggle this for Discord integration
-  // const { username, channelName, exitDiscordActivity } = useDiscord();
+  const { username, channelName, exitDiscordActivity } = useDiscord();
 
   const handleCreateGame = () => {
-    // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
     const code = nanoid(5).toUpperCase();
     createGame(code);
   };
@@ -45,7 +44,7 @@ export const Lobby = () => {
     // Toggle this for Discord integration
     // Leave Discord Activity
     // await sleep(320);
-    // exitDiscordActivity();
+    exitDiscordActivity();
   };
 
   const handleJoinGame = () => {
@@ -58,7 +57,6 @@ export const Lobby = () => {
         isOpen={isSearchingGame && !isGameStarted}
         loadingText="Searching for a game ... "
       />
-      Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}

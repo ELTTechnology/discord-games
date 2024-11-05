@@ -6,14 +6,6 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
-// const protocol = `https`;
-// const clientId = "1292011849470054471";
-// const proxyDomain = "discordsays.com";
-// const resourcePath = "/api/socket";
-// const url = new URL(
-//   `${protocol}://${clientId}.${proxyDomain}/.proxy${resourcePath}`
-// );
-
 const useGameSocket = (sessionId: string) => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
@@ -24,7 +16,6 @@ const useGameSocket = (sessionId: string) => {
   const [isSynonym, setIsSynonym] = useState(false);
 
   useEffect(() => {
-    console.log(" --------- useGameSocket > useEffect --------- ");
     if (!socket) {
       // replace the URL w/ the deployed Web Sockets server
       // or use envi variable and make the URL dynamic
@@ -37,40 +28,47 @@ const useGameSocket = (sessionId: string) => {
       });
     }
 
-    console.log(" --------- useGameSocket > socket connect --------- ");
     socket.on("connect", () => {
       console.log(
-        "Connected to server: ",
+        " [useGameSocket] 🔌 Connected to server: ",
         socket,
-        " with session ID: ",
+        " with session ID 🧑🏽‍💻 : ",
         sessionId
       );
     });
 
     socket.on("gameCreated", (code: string) => {
+      console.log(" [useGameSocket] 🎮 Game created with code: ", code);
+      setPlayerNumber(1);
       setGameCode(code);
     });
 
     socket.on("gameJoined", (code: string, isSynonymRandomized: boolean) => {
+      console.log(" [useGameSocket] 🎮 Game joined with code: ", code);
+      setPlayerNumber(2);
       setIsSynonym(isSynonymRandomized);
       setGameCode(code);
     });
 
     socket.on("startGame", () => {
+      console.log(" [useGameSocket] 🎮 Game started ✅ ",);
       setIsGameStarted(true);
     });
 
     socket.on("opponentAction", (data: TileData, player) => {
+      console.log(" [useGameSocket] 🎮 Opponent action ♟️ ",);
       if (player === playerNumber) return;
       setOpponentAction(data);
     });
 
     socket.on("noGameFound", async () => {
+      console.log(" [useGameSocket] ❌ No game found ❌ ");
       await sleep(960)
       setIsSearchingGame(false);
     });
 
     socket.on("error", (msg: string) => {
+      console.log(" [useGameSocket] ❌ Error ❌ ");
       setError(msg);
     });
 
@@ -108,6 +106,7 @@ const useGameSocket = (sessionId: string) => {
       setGameCode(null);
       setIsGameStarted(false);
       socket.emit("leave", gameCode);
+      socket.disconnect();
     }
   };
 
