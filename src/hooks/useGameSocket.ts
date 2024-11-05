@@ -106,6 +106,7 @@ const useGameSocket = (sessionId: string) => {
       setGameCode(null);
       setIsGameStarted(false);
       socket.emit("leave", gameCode);
+      socket.disconnect();
     }
   };
 

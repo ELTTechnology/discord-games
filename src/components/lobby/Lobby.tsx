@@ -9,7 +9,7 @@ import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
 // import { random } from "lodash";
 
 // Toggle this for Discord integration
-// import { useDiscord } from "@/hooks/useDiscord";
+import { useDiscord } from "@/hooks/useDiscord";
 // import { sleep } from "@/utils/sleep";
 
 export const Lobby = () => {
@@ -31,7 +31,7 @@ export const Lobby = () => {
   } = useGameSocket(sessionId);
 
   // Toggle this for Discord integration
-  // const { username, channelName, exitDiscordActivity } = useDiscord();
+  const { username, channelName, exitDiscordActivity } = useDiscord();
 
   const handleCreateGame = () => {
     const code = nanoid(5).toUpperCase();
@@ -44,7 +44,7 @@ export const Lobby = () => {
     // Toggle this for Discord integration
     // Leave Discord Activity
     // await sleep(320);
-    // exitDiscordActivity();
+    exitDiscordActivity();
   };
 
   const handleJoinGame = () => {

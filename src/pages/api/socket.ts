@@ -123,6 +123,8 @@ export default function handler(
 
       socket.on("leave", (gameCode: string) => {
         console.log(" 🧑🏽‍💻 Player left > socket.id:", socket.id);
+        // Make sure to leave the game room
+        // and close the game room
         io.socketsLeave(gameCode);
       });
 
