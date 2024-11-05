@@ -58,7 +58,6 @@ export const Lobby = () => {
         isOpen={isSearchingGame && !isGameStarted}
         loadingText="Searching for a game ... "
       />
-      Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}
