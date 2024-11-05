@@ -5,6 +5,7 @@ import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
+import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
 // import { random } from "lodash";
 
 // Toggle this for Discord integration
@@ -22,6 +23,7 @@ export const Lobby = () => {
     leaveGame,
     gameCode,
     isGameStarted,
+    isSearchingGame,
     opponentAction,
     playerNumber,
     isSynonym,
@@ -52,6 +54,10 @@ export const Lobby = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
+      <LoadingOverlay
+        isOpen={isSearchingGame && !isGameStarted}
+        loadingText="Searching for a game ... "
+      />
       Version 0.0.3
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
@@ -84,9 +90,9 @@ export const Lobby = () => {
           {error && <p className="text-red-500">{error}</p>}
         </div>
       )}
-
-      {gameCode && !isGameStarted && (<WaitingForOtherPlayer gameCode={gameCode} />)}
-
+      {gameCode && !isGameStarted && (
+        <WaitingForOtherPlayer gameCode={gameCode} />
+      )}
       {isGameStarted && (
         <>
           <Game

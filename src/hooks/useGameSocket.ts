@@ -16,6 +16,7 @@ let socket: Socket | undefined;
 const useGameSocket = (sessionId: string) => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isSearchingGame, setIsSearchingGame] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [opponentAction, setOpponentAction] = useState<TileData | null>(null);
   const [playerNumber, setPlayerNumber] = useState<1 | 2>();
@@ -37,7 +38,12 @@ const useGameSocket = (sessionId: string) => {
 
     console.log(" --------- useGameSocket > socket connect --------- ");
     socket.on("connect", () => {
-      console.log("Connected to server: ", socket, " with session ID: ", sessionId);
+      console.log(
+        "Connected to server: ",
+        socket,
+        " with session ID: ",
+        sessionId
+      );
     });
 
     socket.on("gameCreated", (code: string) => {
@@ -56,6 +62,10 @@ const useGameSocket = (sessionId: string) => {
     socket.on("opponentAction", (data: TileData, player) => {
       if (player === playerNumber) return;
       setOpponentAction(data);
+    });
+
+    socket.on("noGameFound", () => {
+      setIsSearchingGame(false);
     });
 
     socket.on("error", (msg: string) => {
@@ -115,6 +125,7 @@ const useGameSocket = (sessionId: string) => {
     disconnect,
     leaveGame,
     isGameStarted,
+    isSearchingGame,
     opponentAction,
     playerNumber,
     isSynonym,

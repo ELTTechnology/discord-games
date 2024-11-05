@@ -1,7 +1,7 @@
-import { Server as IOServer } from 'socket.io';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { Server as HTTPServer } from 'http';
-import { Socket } from 'net';
+import { Server as IOServer } from "socket.io";
+import { NextApiRequest, NextApiResponse } from "next";
+import { Server as HTTPServer } from "http";
+import { Socket } from "net";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 interface SocketServer extends HTTPServer {
@@ -16,88 +16,123 @@ const games: any = {};
 
 const gameCodes: string[] = [];
 
-export default function handler(req: NextApiRequest, res: ExtendedNextApiResponse) {
+export default function handler(
+  req: NextApiRequest,
+  res: ExtendedNextApiResponse
+) {
   if (!res.socket.server.io) {
     const io = new IOServer(res.socket.server, {
       cors: {
-        origin: '*', // Your Next.js app's origin
-        methods: ['GET', 'POST'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        origin: "*", // Your Next.js app's origin
+        methods: ["GET", "POST"],
+        allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true,
       },
-      path: "/api/socket",  // Set the path explicitly
+      path: "/api/socket", // Set the path explicitly
       // transports: ['polling', 'websocket'],
     });
     res.socket.server.io = io;
 
-    console.log('Socket.io established');
+    console.log("Socket.io established");
 
-    io.on('connection', (socket) => {
-      console.log('New player connected:', socket.id);
+    io.on("connection", (socket) => {
+      console.log("New player connected:", socket.id);
+
+      const onNoGameFound = () => {
+        console.log(" --------- onNoGameFound --------- ");
+        socket.emit("noGameFound");
+      };
 
       const autoJoinAvailableGame = () => {
         console.log(" --------- autoJoinAvailableGame --------- ");
-        gameCodes.forEach(async (gameCode) => {
+        gameCodes.forEach(async (gameCode, index) => {
           const room = io.sockets.adapter.rooms.get(gameCode);
           const sockets = await io.in(gameCode).fetchSockets();
           console.log("socket.id: ", socket.id);
           console.log("sockets: ", sockets);
-          if (room && room.size === 1 && !sockets.find((s) => s.id === socket.id)) {
+          if (
+            room &&
+            room.size === 1 &&
+            !sockets.find((s) => s.id === socket.id)
+          ) {
             socket.join(gameCode);
             console.log(`${socket.id} joined game room ${gameCode}`);
-            socket.emit('gameJoined', gameCode, games[gameCode as string].player2);
-            io.to(gameCode).emit('startGame');  // Notify both players to start the game
+            socket.emit(
+              "gameJoined",
+              gameCode,
+              games[gameCode as string].player2
+            );
+            io.to(gameCode).emit("startGame"); // Notify both players to start the game
+          } else {
+            if (gameCodes.length === index + 1) {
+              onNoGameFound();
+            }
           }
         });
-      }
+      };
 
       // Check if same user is already in a game room
-      if (gameCodes.length > 0) autoJoinAvailableGame();
+      if (gameCodes.length > 0) {
+        autoJoinAvailableGame();
+      } else {
+        onNoGameFound();
+      }
 
-      socket.on('connect_error', (err) => {
-        console.error('Connection error:', err);
+      socket.on("connect_error", (err) => {
+        console.error("Connection error:", err);
       });
 
       // Create a game room
-      socket.on('createGame', (gameCode: string, isSynonym: boolean) => {
+      socket.on("createGame", (gameCode: string, isSynonym: boolean) => {
         socket.join(gameCode);
-        games[gameCode as string] = { gameCode: gameCode, player1: isSynonym, player2: !isSynonym };
+        games[gameCode as string] = {
+          gameCode: gameCode,
+          player1: isSynonym,
+          player2: !isSynonym,
+        };
         console.log(`Game room ${gameCode} created by ${socket.id}`);
         gameCodes.push(gameCode);
-        socket.emit('gameCreated', gameCode);
+        socket.emit("gameCreated", gameCode);
       });
 
       // Join an existing game room
-      socket.on('joinGame', (gameCode: string) => {
+      socket.on("joinGame", (gameCode: string) => {
         const room = io.sockets.adapter.rooms.get(gameCode);
         if (room && room.size === 1) {
           socket.join(gameCode);
           console.log(`${socket.id} joined game room ${gameCode}`);
-          socket.emit('gameJoined', gameCode, games[gameCode as string].player2);
-          io.to(gameCode).emit('startGame');  // Notify both players to start the game
+          socket.emit(
+            "gameJoined",
+            gameCode,
+            games[gameCode as string].player2
+          );
+          io.to(gameCode).emit("startGame"); // Notify both players to start the game
         } else {
-          socket.emit('error', 'Game room not available or already full');
+          socket.emit("error", "Game room not available or already full");
         }
       });
 
-      socket.on('opponentAction', (gameCode: string, data: any, playerNumber: 1 | 2) => {
-        socket.to(gameCode).emit('opponentAction', data, playerNumber);
-      });
+      socket.on(
+        "opponentAction",
+        (gameCode: string, data: any, playerNumber: 1 | 2) => {
+          socket.to(gameCode).emit("opponentAction", data, playerNumber);
+        }
+      );
 
-      socket.on('leave', (gameCode: string) => {
+      socket.on("leave", (gameCode: string) => {
         console.log("Player left > socket.id:", socket.id);
         io.socketsLeave(gameCode);
-      })
+      });
 
-      socket.on('disconnect', (gameCode: string) => {
-        console.log('Player disconnected:', socket.id);
+      socket.on("disconnect", (gameCode: string) => {
+        console.log("Player disconnected:", socket.id);
         // const room = io.sockets.adapter.rooms.get(gameCode);
         // io.to(gameCode).emit('');
         socket.leave(gameCode);
       });
     });
   } else {
-    console.log('Socket.io server already running');
+    console.log("Socket.io server already running");
   }
   res.end();
 }
