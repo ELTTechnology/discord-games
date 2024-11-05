@@ -34,7 +34,6 @@ export const Lobby = () => {
   // const { username, channelName, exitDiscordActivity } = useDiscord();
 
   const handleCreateGame = () => {
-    // const code = Math.random().toString(36).substr(2, 5).toUpperCase();
     const code = nanoid(5).toUpperCase();
     createGame(code);
   };
