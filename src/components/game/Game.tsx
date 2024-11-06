@@ -198,7 +198,7 @@ export const Game = ({
       <div className="my-2 text-white">
         Select{" "} <span className="font-bold text-amber-500">{isSynonym ? `synonyms!` : `antonyms!`}</span>
       </div>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-3">
         <div className="flex flex-row gap-2">
           {cols.map((col) => (
             <div
