@@ -74,6 +74,7 @@ export const Game = ({
   const [isWinner, setIsWinner] = useState<boolean | null>(null);
   const [tileState, setTileState] = useState<boolean>(playerNumber === 2);
   const [instructionsOpen, setInstructionsOpen] = useState(true);
+  const [isInstructionsAutoClose, setIsInstructionsAutoClose] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -190,13 +191,27 @@ export const Game = ({
 
   return (
     <div className="min-w-[320px] w-[500px]">
-      <Modal title="Instructions" isOpen={instructionsOpen}>
+      <Modal
+        title="Instructions"
+        isOpen={instructionsOpen}
+        onClose={
+          isInstructionsAutoClose ? undefined : () => setInstructionsOpen(false)
+        }
+      >
         <div>
-          <Instructions autoclose />
+          <Instructions autoclose={isInstructionsAutoClose} />
+          <div className="my-4 text-rose-700 font-medium">
+            Select <b>{isSynonym ? "synonyms" : "antonyms"}</b> to earn points.
+            Choosing <b>{!isSynonym ? "synonyms" : "antonyms"}</b> gives points
+            to your opponent
+          </div>
         </div>
       </Modal>
       <div className="my-2 text-white">
-        Select{" "} <span className="font-bold text-amber-500">{isSynonym ? `synonyms!` : `antonyms!`}</span>
+        Select{" "}
+        <span className="font-bold text-amber-500">
+          {isSynonym ? `synonyms!` : `antonyms!`}
+        </span>
       </div>
       <div className="flex gap-2">
         <div className="flex flex-row gap-2">
@@ -238,6 +253,18 @@ export const Game = ({
           synonyms={synonymsAnswered}
           antonyms={antonymsAnswered}
         />
+      </div>
+
+      <div className="mt-8">
+        <button
+          onClick={() => {
+            setIsInstructionsAutoClose(false);
+            setInstructionsOpen(true);
+          }}
+          className="bg-emerald-500 text-white py-2 px-4 rounded"
+        >
+          Instructions
+        </button>
       </div>
     </div>
   );

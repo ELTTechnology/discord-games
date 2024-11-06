@@ -12,10 +12,11 @@ export const Instructions = ({ autoclose, countdown = 10 }: Props) => {
   return (
     <div id="instructions">
       <div>
-        You will be assigned either synonyms or antonyms. Selecting the wrong
-        type gives a point to the other player. The inviter goes first. When a
-        player matches a correct pair, they choose the next tile; if not, the
-        turn passes. A single distractor tile is included—once only the
+        You will be assigned to select either synonyms or antonyms. Each turn,
+        choose only one word. Selecting an incorrect pair awards a point to the
+        opponent. The inviter takes the first turn. If you match a correct pair,
+        you may select again; otherwise, the turn passes to the opponent. A
+        single distractor word is included, which has no match. When only the
         distractor remains, the game ends, and the player with the most correct
         pairs wins.
       </div>
