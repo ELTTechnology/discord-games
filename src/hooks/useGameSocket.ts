@@ -63,7 +63,7 @@ const useGameSocket = (sessionId: string) => {
 
     socket.on("noGameFound", async () => {
       console.log(" [useGameSocket] ❌ No game found ❌ ");
-      await sleep(960)
+      await sleep(1920)
       setIsSearchingGame(false);
     });
 

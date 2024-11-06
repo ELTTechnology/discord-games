@@ -1,7 +1,6 @@
 import React from "react";
-import Lottie from "lottie-react";
-import animationData from "@/assets/loading_squares.json";
 import { useTimer } from "@/hooks/useTimer";
+import { LoadingSquares } from "@/animations/LoadingSquares";
 
 interface Props {
   autoclose?: boolean;
@@ -23,11 +22,7 @@ export const Instructions = ({ autoclose, countdown = 10 }: Props) => {
       {autoclose && (
         <div className="flex justify-end items-center">
           {timer}
-          <Lottie
-            className="w-16 h-16"
-            animationData={animationData}
-            loop={true}
-          />
+          <LoadingSquares styles="w-16 h-16" speed={1.5} />
         </div>
       )}
     </div>

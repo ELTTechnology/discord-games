@@ -1,6 +1,5 @@
-import Lottie from "lottie-react";
 import { formatTimer, useTimer } from "@/hooks/useTimer";
-import animationData from "@/assets/loading_squares.json";
+import { LoadingSquares } from "@/animations/LoadingSquares";
 
 interface Props {
   gameCode: string;
@@ -15,7 +14,7 @@ export const WaitingForOtherPlayer = ({ gameCode }: Props) => {
     <div className="border-2 border-amber-500 shadow shadow-amber-400 rounded-xl p-6 w-[430px] h-[150px] font-semibold text-xl text-white mt-3">
       <div className="flex flex-row items-center">
         <div className="w-[80px]">
-          <Lottie className="w-24" animationData={animationData} loop={true} />
+          <LoadingSquares styles="w-24" speed={2.5} />
         </div>
         <div>
           <p>Waiting for other player to join ...</p>

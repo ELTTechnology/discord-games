@@ -22,7 +22,6 @@ export const Tile = ({
   animationEnd,
   isDisabled,
 }: Prop) => {
-
   const bgColor = () => {
     switch (result) {
       case "synonyms":
@@ -47,7 +46,11 @@ export const Tile = ({
         transition-colors
         hover:brightness-110
         ${isSelected() ? bgColor() : "bg-indigo-500 text-zinc-100"}
-        ${!isSelected() && isAnimating ? "saturate-0 hover:cursor-not-allowed": ""}
+        ${
+          !isSelected() && isAnimating
+            ? "saturate-0 hover:cursor-not-allowed"
+            : ""
+        }
       `}
       onClick={onSelect}
       initial={{ scale: 0, opacity: 0 }}
