@@ -43,6 +43,8 @@ export const useDiscord = () => {
     await discordSDK.ready();
     console.log("Discord SDK is ready");
 
+    console.log(" [useDiscord] setupDiscordSDK > discordSDK: ", discordSDK);
+
     // Authorize with Discord Client
     const { code } = await discordSDK.commands.authorize({
       client_id: clientId,
@@ -77,7 +79,7 @@ export const useDiscord = () => {
       setUserAvatar(`https://cdn.discordapp.com/avatars/${authResponse.user.id}/${authResponse.user.avatar}.png`);
     }
 
-    console.log(" authResponse: ", authResponse);
+    console.log(" [useDiscord] setupDiscordSDK > authResponse: ", authResponse);
 
     setAuth(authResponse);
 
