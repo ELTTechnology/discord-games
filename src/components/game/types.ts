@@ -13,4 +13,5 @@ export type SelectionResult = "synonyms" | "antonyms" | "error" | null;
 export interface User {
   name: string;
   avatar: string;
+  isSynonym: boolean;
 }

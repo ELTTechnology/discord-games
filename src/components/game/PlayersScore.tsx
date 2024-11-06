@@ -4,18 +4,18 @@ import { User } from './types';
 
 interface Props {
   userDetails: User;
-  userScore: number;
   opponentDetails: User;
-  opponentScore: number;
   playerNumber: number;
+  synonyms: number;
+  antonyms: number;
 }
 
 export const PlayersScore = ({
   userDetails,
-  userScore,
   opponentDetails,
-  opponentScore,
   playerNumber,
+  synonyms,
+  antonyms
 } : Props) => {
 
   const playerDetails = playerNumber === 1 ? [userDetails, opponentDetails] : [opponentDetails, userDetails];
@@ -35,7 +35,7 @@ export const PlayersScore = ({
               )}
               <div className="flex flex-col items-start ml-3">
                 <span className="font-semibold text-black text-base">{player.name ? player.name : `Player ${index + 1}`}</span>
-                <p className="text-amber-600 font-bold">{index === 0 ? userScore : opponentScore} pts</p>
+                <p className={`font-bold ${playerNumber === index + 1 ? 'text-indigo-500' : 'text-slate-500'}`}>{player.isSynonym ? synonyms : antonyms} pts</p>
               </div>
             </div>
           ))

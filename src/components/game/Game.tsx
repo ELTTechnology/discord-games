@@ -233,10 +233,10 @@ export const Game = ({
         </div>
         <PlayersScore
           userDetails={userDetails}
-          userScore={playerNumber === 1 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
           opponentDetails={opponentDetails}
-          opponentScore={playerNumber === 2 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
           playerNumber={playerNumber ?? 0}
+          synonyms={synonymsAnswered}
+          antonyms={antonymsAnswered}
         />
       </div>
     </div>

@@ -32,8 +32,7 @@ export const Lobby = () => {
     playerNumber,
     isSynonym,
     error,
-    opponentName,
-    opponentAvatar,
+    opponentDetails,
   } = useGameSocket(sessionId, username, userAvatar);
 
   useEffect(() => {
@@ -128,8 +127,8 @@ export const Lobby = () => {
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}
-            userDetails={{ name: username ?? '', avatar: userAvatar ?? '' }}
-            opponentDetails={{ name: opponentName ?? '', avatar: opponentAvatar ?? '' }}
+            userDetails={{ name: username ?? '', avatar: userAvatar ?? '', isSynonym }}
+            opponentDetails={opponentDetails}
           />
         </>
       )}
