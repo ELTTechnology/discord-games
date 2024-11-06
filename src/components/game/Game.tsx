@@ -236,6 +236,7 @@ export const Game = ({
           userScore={playerNumber === 1 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
           opponentDetails={opponentDetails}
           opponentScore={playerNumber === 2 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
+          playerNumber={playerNumber ?? 0}
         />
       </div>
     </div>
