@@ -1,4 +1,4 @@
-import { TileData } from "@/components/game/types";
+import { TileData, User } from "@/components/game/types";
 import { sleep } from "@/utils/sleep";
 import { random } from "lodash";
 import { useEffect, useState } from "react";
@@ -14,8 +14,7 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
   const [opponentAction, setOpponentAction] = useState<TileData | null>(null);
   const [playerNumber, setPlayerNumber] = useState<1 | 2>();
   const [isSynonym, setIsSynonym] = useState(false);
-  const [opponentName, setOpponentName] = useState<string | null>(null);
-  const [opponentAvatar, setOpponentAvatar] = useState<string | null>(null);
+  const [opponentDetails, setOpponentDetails] = useState<User>({name: '', avatar: '', isSynonym: false});
   const [availableGameCode, setAvailableGameCode] = useState("");
 
   useEffect(() => {
@@ -65,10 +64,9 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
       setOpponentAction(data);
     });
 
-    socket.on("opponentDetailsReceived", (name: string, avatar: string, player) => {
+    socket.on("opponentDetailsReceived", (name: string, avatar: string, player, isSynonym: boolean) => {
       if (player === playerNumber) return;
-      setOpponentName(name);
-      setOpponentAvatar(avatar);
+      setOpponentDetails({ name, avatar, isSynonym });
     });
     socket.on("availableGameFound", async (gameCode: string) => {
       console.log(" [useGameSocket] 🎮 Game found ✅ ");
@@ -117,7 +115,7 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
 
   const sendOpponentDetails = (name: string | null, avatar: string | null) => {
     if (socket) {
-      socket.emit("sendOpponentDetails", gameCode, name, avatar, playerNumber);
+      socket.emit("sendOpponentDetails", gameCode, name, avatar, playerNumber, isSynonym);
     }
   };
 
@@ -153,8 +151,7 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
     playerNumber,
     isSynonym,
     error,
-    opponentName,
-    opponentAvatar,
+    opponentDetails,
   };
 };
 

@@ -122,8 +122,8 @@ export default function handler(
 
       socket.on(
         "sendOpponentDetails",
-        (gameCode: string, name: string, avatar: string, playerNumber: 1 | 2) => {
-          socket.to(gameCode).emit("opponentDetailsReceived", name, avatar, playerNumber);
+        (gameCode: string, name: string, avatar: string, playerNumber: 1 | 2, isSynonym: boolean) => {
+          socket.to(gameCode).emit("opponentDetailsReceived", name, avatar, playerNumber, isSynonym);
         }
       );
 
