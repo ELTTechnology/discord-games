@@ -38,6 +38,13 @@ export default function handler(
     io.on("connection", (socket) => {
       console.log(" 🧑🏽‍💻 New player connected:", socket.id);
 
+      const joinGame = (gameCode: string) => {
+        socket.join(gameCode);
+        console.log(` 🧑🏽‍💻 ${socket.id} joined game room 🎮 ${gameCode}`);
+        socket.emit("gameJoined", gameCode, games[gameCode as string].player2);
+        io.to(gameCode).emit("startGame"); // Notify both players to start the game
+      };
+
       const onNoGameFound = () => {
         console.log(" ❌ NO GAME FOUND ❌ ");
         socket.emit("noGameFound");
@@ -50,21 +57,17 @@ export default function handler(
           const sockets = await io.in(gameCode).fetchSockets();
           console.log(" 🧑🏽‍💻 socket.id: ", socket.id);
           console.log(" 🔢 sockets.length: ", sockets.length);
-          console.log(" 📋 sockets ids: ", sockets.map(s => s.id).join(" / "));
+          console.log(
+            " 📋 sockets ids: ",
+            sockets.map((s) => s.id).join(" / ")
+          );
           if (
             room &&
             room.size === 1 &&
             !sockets.find((s) => s.id === socket.id)
           ) {
             console.log(" 🎮 Game room available 🔎: ", gameCode);
-            socket.join(gameCode);
-            console.log(` 🧑🏽‍💻 ${socket.id} joined game room 🎮 ${gameCode}`);
-            socket.emit(
-              "gameJoined",
-              gameCode,
-              games[gameCode as string].player2
-            );
-            io.to(gameCode).emit("startGame"); // Notify both players to start the game
+            joinGame(gameCode);
           } else {
             if (gameCodes.length === index + 1) {
               onNoGameFound();
@@ -94,21 +97,17 @@ export default function handler(
         };
         console.log(`Game room 🎮 ${gameCode} created by 🧑🏽‍💻 ${socket.id}`);
         gameCodes.push(gameCode);
+        // Emit gameCode back to player 1
         socket.emit("gameCreated", gameCode);
+        // Notify other players that a game is available
+        socket.broadcast.emit("availableGameFound", gameCode);
       });
 
       // Join an existing game room
       socket.on("joinGame", (gameCode: string) => {
         const room = io.sockets.adapter.rooms.get(gameCode);
         if (room && room.size === 1) {
-          socket.join(gameCode);
-          console.log(` 🧑🏽‍💻 ${socket.id} joined game room 🎮 ${gameCode}`);
-          socket.emit(
-            "gameJoined",
-            gameCode,
-            games[gameCode as string].player2
-          );
-          io.to(gameCode).emit("startGame"); // Notify both players to start the game
+          joinGame(gameCode);
         } else {
           socket.emit("error", "Game room not available or already full");
         }
@@ -137,9 +136,12 @@ export default function handler(
 
       socket.on("disconnect", (gameCode: string) => {
         console.log(" 🧑🏽‍💻 Player disconnected 🔌 :", socket.id);
-        // const room = io.sockets.adapter.rooms.get(gameCode);
-        // io.to(gameCode).emit('');
-        socket.leave(gameCode);
+        // Current player leave the game room
+        // socket.leave(gameCode);
+        // Make all players leave the game room
+        io.socketsLeave(gameCode);
+        // Disconnect all sockets
+        io.disconnectSockets();
       });
     });
   } else {

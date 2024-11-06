@@ -25,6 +25,7 @@ export const Lobby = () => {
     leaveGame,
     sendOpponentDetails,
     gameCode,
+    availableGameCode,
     isGameStarted,
     isSearchingGame,
     opponentAction,
@@ -40,6 +41,12 @@ export const Lobby = () => {
       sendOpponentDetails(username, userAvatar);
     }
   }, [username, userAvatar, isGameStarted]);
+
+  useEffect(() => {
+    // If we want to auto join the player
+    // availableGameCode && joinGame(availableGameCode);
+    availableGameCode && setInputCode(availableGameCode);
+  }, [availableGameCode]);
 
   const handleCreateGame = () => {
     const code = nanoid(5).toUpperCase();
@@ -76,6 +83,14 @@ export const Lobby = () => {
           >
             Create Game
           </button>
+
+          <div className="text-white">or</div>
+          {availableGameCode && (
+            <div className="flex space-x-2">
+              <span className="text-emerald-500">Available game found! </span>
+              <span className="text-white" >{availableGameCode}</span>
+            </div>
+          )}
 
           <div className="flex space-x-2">
             <input

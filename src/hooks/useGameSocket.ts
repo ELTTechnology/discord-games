@@ -16,6 +16,7 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
   const [isSynonym, setIsSynonym] = useState(false);
   const [opponentName, setOpponentName] = useState<string | null>(null);
   const [opponentAvatar, setOpponentAvatar] = useState<string | null>(null);
+  const [availableGameCode, setAvailableGameCode] = useState("");
 
   useEffect(() => {
     if (!socket) {
@@ -69,6 +70,10 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
       setOpponentName(name);
       setOpponentAvatar(avatar);
     });
+    socket.on("availableGameFound", async (gameCode: string) => {
+      console.log(" [useGameSocket] 🎮 Game found ✅ ");
+      setAvailableGameCode(gameCode);
+    })
 
     socket.on("noGameFound", async () => {
       console.log(" [useGameSocket] ❌ No game found ❌ ");
@@ -135,6 +140,7 @@ const useGameSocket = (sessionId: string, userName: string | null, userAvatar: s
 
   return {
     gameCode,
+    availableGameCode,
     createGame,
     joinGame,
     sendAction,
