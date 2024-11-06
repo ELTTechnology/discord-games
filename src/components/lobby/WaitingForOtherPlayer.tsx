@@ -17,11 +17,11 @@ export const WaitingForOtherPlayer = ({ gameCode }: Props) => {
           <LoadingSquares styles="w-24" speed={2.5} />
         </div>
         <div>
-          <p>Waiting for other player to join ...</p>
-          <p>
-            <span>Game code: </span>
-            <span className="text-amber-500">{gameCode}</span>
-          </p>
+        <p>Waiting for other player to join ...</p>
+        <p className="mt-2">
+          <span>Game code: </span>
+          <span className="text-amber-500">{gameCode}</span>
+        </p>
         </div>
       </div>
       <p className="flex items-center justify-center">{formatTimer(timer)}</p>

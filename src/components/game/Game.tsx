@@ -1,6 +1,6 @@
 "use client";
 import { shuffle } from "lodash";
-import { Data, TileData, SelectionResult } from "./types";
+import { Data, TileData, SelectionResult, User } from "./types";
 import { useEffect, useState } from "react";
 import { Tile } from "./Tile";
 import { AnimatePresence } from "framer-motion";
@@ -10,6 +10,7 @@ import { Won } from "./Won";
 import { Lose } from "./Lose";
 import { Modal } from "../modal/Modal";
 import { Instructions } from "../instructions/Instructions";
+import { PlayersScore } from "./PlayersScore";
 
 interface Props {
   data: Data[];
@@ -18,6 +19,8 @@ interface Props {
   opponentAction: TileData | null;
   playerNumber: number | undefined;
   isSynonym: boolean;
+  userDetails: User;
+  opponentDetails: User;
 }
 
 const createCinnamonSquares = (data: Data[]) => {
@@ -57,6 +60,8 @@ export const Game = ({
   opponentAction,
   isSynonym,
   playerNumber,
+  userDetails,
+  opponentDetails,
 }: Props) => {
   const [cinnamonSquares, setCinnamonSquares] = useState(
     shuffle(createCinnamonSquares(data))
@@ -191,42 +196,47 @@ export const Game = ({
         </div>
       </Modal>
       <div className="my-2 text-white">
-        Select{" "}
-        {isSynonym
-          ? `synonyms! (${synonymsAnswered})`
-          : `antonyms! (${antonymsAnswered})`}
+        Select{" "} <span className="font-bold text-amber-500">{isSynonym ? `synonyms!` : `antonyms!`}</span>
       </div>
-      <div className="flex flex-row gap-2">
-        {cols.map((col) => (
-          <div
-            key={col}
-            className="w-[120px] h-[504px] flex flex-col-reverse gap-2"
-          >
-            <AnimatePresence
-              onExitComplete={() => setIsAnimating(false)}
-              presenceAffectsLayout={true}
-              mode="popLayout"
+      <div className="flex gap-2">
+        <div className="flex flex-row gap-2">
+          {cols.map((col) => (
+            <div
+              key={col}
+              className="w-[120px] h-[504px] flex flex-col-reverse gap-2"
             >
-              {cinnamonSquares.slice(col, col + 4).map((cinnamon) =>
-                !cinnamon.hidden ? (
-                  <Tile
-                    key={cinnamon.word}
-                    data={cinnamon}
-                    selectedWords={selectedWords}
-                    onSelect={() => onSelect(cinnamon)}
-                    isSelected={() => {
-                      return isSelected(cinnamon);
-                    }}
-                    result={result}
-                    isAnimating={isAnimating}
-                    animationEnd={() => setIsAnimating(false)}
-                    isDisabled={tileState}
-                  />
-                ) : null
-              )}
-            </AnimatePresence>
-          </div>
-        ))}
+              <AnimatePresence
+                onExitComplete={() => setIsAnimating(false)}
+                presenceAffectsLayout={true}
+                mode="popLayout"
+              >
+                {cinnamonSquares.slice(col, col + 4).map((cinnamon) =>
+                  !cinnamon.hidden ? (
+                    <Tile
+                      key={cinnamon.word}
+                      data={cinnamon}
+                      selectedWords={selectedWords}
+                      onSelect={() => onSelect(cinnamon)}
+                      isSelected={() => {
+                        return isSelected(cinnamon);
+                      }}
+                      result={result}
+                      isAnimating={isAnimating}
+                      animationEnd={() => setIsAnimating(false)}
+                      isDisabled={tileState}
+                    />
+                  ) : null
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+        <PlayersScore
+          userDetails={userDetails}
+          userScore={playerNumber === 1 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
+          opponentDetails={opponentDetails}
+          opponentScore={playerNumber === 2 ? (isSynonym ? synonymsAnswered : antonymsAnswered) : 0}
+        />
       </div>
     </div>
   );

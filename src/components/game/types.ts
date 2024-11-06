@@ -9,3 +9,8 @@ export interface TileData extends Data {
 }
 
 export type SelectionResult = "synonyms" | "antonyms" | "error" | null;
+
+export interface User {
+  name: string;
+  avatar: string;
+}

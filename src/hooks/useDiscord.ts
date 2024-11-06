@@ -6,6 +6,7 @@ export const useDiscord = () => {
   const [discordSDK, setDiscordSDK] = useState<DiscordSDK>();
   const [auth, setAuth] = useState<any>();
   const [username, setUsername] = useState("")
+  const [userAvatar, setUserAvatar] = useState("")
   const [clientId] = useState(process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "");
 
   const appendVoiceChannelName = async () => {
@@ -72,6 +73,9 @@ export const useDiscord = () => {
     });
 
     setUsername(authResponse.user.global_name || authResponse.user.username);
+    if (authResponse.user.avatar) {
+      setUserAvatar(`https://cdn.discordapp.com/avatars/${authResponse.user.id}/${authResponse.user.avatar}.png`);
+    }
 
     console.log(" authResponse: ", authResponse);
 
@@ -98,6 +102,7 @@ export const useDiscord = () => {
     auth,
     username,
     channelName,
+    userAvatar,
     exitDiscordActivity,
   };
 };

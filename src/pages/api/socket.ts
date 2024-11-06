@@ -121,6 +121,13 @@ export default function handler(
         }
       );
 
+      socket.on(
+        "sendOpponentDetails",
+        (gameCode: string, name: string, avatar: string, playerNumber: 1 | 2) => {
+          socket.to(gameCode).emit("opponentDetailsReceived", name, avatar, playerNumber);
+        }
+      );
+
       socket.on("leave", (gameCode: string) => {
         console.log(" 🧑🏽‍💻 Player left > socket.id:", socket.id);
         // Make sure to leave the game room
