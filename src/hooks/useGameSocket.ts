@@ -6,7 +6,7 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
-const useGameSocket = (sessionId: string) => {
+const useGameSocket = (sessionId: string, userName: string | null, userAvatar: string | null) => {
   const [gameCode, setGameCode] = useState<string | null>(null);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isSearchingGame, setIsSearchingGame] = useState(true);
@@ -14,6 +14,8 @@ const useGameSocket = (sessionId: string) => {
   const [opponentAction, setOpponentAction] = useState<TileData | null>(null);
   const [playerNumber, setPlayerNumber] = useState<1 | 2>();
   const [isSynonym, setIsSynonym] = useState(false);
+  const [opponentName, setOpponentName] = useState<string | null>(null);
+  const [opponentAvatar, setOpponentAvatar] = useState<string | null>(null);
 
   useEffect(() => {
     if (!socket) {
@@ -53,12 +55,19 @@ const useGameSocket = (sessionId: string) => {
     socket.on("startGame", () => {
       console.log(" [useGameSocket] 🎮 Game started ✅ ",);
       setIsGameStarted(true);
+      sendOpponentDetails(userName, userAvatar);
     });
 
     socket.on("opponentAction", (data: TileData, player) => {
       console.log(" [useGameSocket] 🎮 Opponent action ♟️ ",);
       if (player === playerNumber) return;
       setOpponentAction(data);
+    });
+
+    socket.on("opponentDetailsReceived", (name: string, avatar: string, player) => {
+      if (player === playerNumber) return;
+      setOpponentName(name);
+      setOpponentAvatar(avatar);
     });
 
     socket.on("noGameFound", async () => {
@@ -101,6 +110,12 @@ const useGameSocket = (sessionId: string) => {
     }
   };
 
+  const sendOpponentDetails = (name: string | null, avatar: string | null) => {
+    if (socket) {
+      socket.emit("sendOpponentDetails", gameCode, name, avatar, playerNumber);
+    }
+  };
+
   const leaveGame = () => {
     if (socket) {
       setGameCode(null);
@@ -125,12 +140,15 @@ const useGameSocket = (sessionId: string) => {
     sendAction,
     disconnect,
     leaveGame,
+    sendOpponentDetails,
     isGameStarted,
     isSearchingGame,
     opponentAction,
     playerNumber,
     isSynonym,
     error,
+    opponentName,
+    opponentAvatar,
   };
 };
 

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useGameSocket from "@/hooks/useGameSocket";
 import { Game } from "../game/Game";
 import { data } from "../game/data";
@@ -15,11 +15,15 @@ export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
   // Generate specific session/user ID
   const [sessionId] = useState(nanoid(9));
+  // Toggle this for Discord integration
+  const { username, channelName, userAvatar, exitDiscordActivity } = useDiscord();
+
   const {
     createGame,
     joinGame,
     sendAction,
     leaveGame,
+    sendOpponentDetails,
     gameCode,
     isGameStarted,
     isSearchingGame,
@@ -27,10 +31,15 @@ export const Lobby = () => {
     playerNumber,
     isSynonym,
     error,
-  } = useGameSocket(sessionId);
+    opponentName,
+    opponentAvatar,
+  } = useGameSocket(sessionId, username, userAvatar);
 
-  // Toggle this for Discord integration
-  const { username, channelName, exitDiscordActivity } = useDiscord();
+  useEffect(() => {
+    if (isGameStarted && username && userAvatar) {
+      sendOpponentDetails(username, userAvatar);
+    }
+  }, [username, userAvatar, isGameStarted]);
 
   const handleCreateGame = () => {
     const code = nanoid(5).toUpperCase();
@@ -59,8 +68,8 @@ export const Lobby = () => {
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}
-          <div className="my-2 text-white">Activity Channel: {channelName}</div>
-          <div className="my-2 text-white">User: {username}</div>
+          <div className="my-2 text-white">Activity Channel: {channelName ?? '-'}</div>
+          <div className="my-2 text-white">Hi, {username}</div>
           <button
             onClick={handleCreateGame}
             className="bg-green-500 w-full text-white py-2 px-4 rounded"
@@ -104,6 +113,8 @@ export const Lobby = () => {
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}
+            userDetails={{ name: username ?? '', avatar: userAvatar ?? '' }}
+            opponentDetails={{ name: opponentName ?? '', avatar: opponentAvatar ?? '' }}
           />
         </>
       )}
