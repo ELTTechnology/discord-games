@@ -3,7 +3,7 @@ import { Lobby } from "@/components/lobby/Lobby";
 import { patchUrlMappings } from "@discord/embedded-app-sdk";
 import { useEffect } from "react";
 
-import { Roboto } from "@next/font/google";
+import { Roboto } from "next/font/google";
 
 const roboto = Roboto({
   subsets: ["latin"],
