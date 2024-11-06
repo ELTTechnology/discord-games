@@ -10,7 +10,7 @@ import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
 
 // Toggle this for Discord integration
 import { useDiscord } from "@/hooks/useDiscord";
-// import { sleep } from "@/utils/sleep";
+import { sleep } from "@/utils/sleep";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
@@ -60,8 +60,8 @@ export const Lobby = () => {
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}
-          {/* <div className="my-2 text-white">Activity Channel: {channelName}</div>
-          <div className="my-2 text-white">User: {username}</div> */}
+          <div className="my-2 text-white">Activity Channel: {channelName}</div>
+          <div className="my-2 text-white">User: {username}</div>
           <button
             onClick={handleCreateGame}
             className="bg-green-500 w-full text-white py-2 px-4 rounded"

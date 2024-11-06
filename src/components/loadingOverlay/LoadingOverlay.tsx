@@ -1,6 +1,5 @@
 import React from "react";
-import animationData from "@/assets/loading_squares.json";
-import Lottie from "lottie-react";
+import { LoadingSquares } from "@/animations/LoadingSquares";
 
 interface Props {
   loadingText?: string;
@@ -8,16 +7,13 @@ interface Props {
 }
 
 export const LoadingOverlay = ({ loadingText, isOpen }: Props) => {
+
   return (
     <>
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
           <div>
-            <Lottie
-              className="h-[200px]"
-              animationData={animationData}
-              loop={true}
-            />
+            <LoadingSquares styles="h-[200px]" speed={2} />
             {loadingText && (
               <div className="p-3 text-center text-white text-xl -translate-y-16">
                 {loadingText}
