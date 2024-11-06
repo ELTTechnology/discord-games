@@ -6,7 +6,6 @@ import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
-// import { random } from "lodash";
 
 // Toggle this for Discord integration
 import { useDiscord } from "@/hooks/useDiscord";
@@ -43,7 +42,7 @@ export const Lobby = () => {
     leaveGame();
     // Toggle this for Discord integration
     // Leave Discord Activity
-    // await sleep(320);
+    await sleep(320);
     exitDiscordActivity();
   };
 

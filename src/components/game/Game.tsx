@@ -48,8 +48,6 @@ const createCinnamonSquares = (data: Data[]) => {
   return cinnamonSquares;
 };
 
-// const cols = Array.from({ length: 4 }, (_, i) => i + 1);
-
 const cols = [0, 4, 8, 12];
 
 export const Game = ({

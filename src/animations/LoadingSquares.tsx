@@ -7,7 +7,7 @@ interface Props {
   speed?: number;
 }
 
-export const LoadingSquares = ({ styles, speed = 1}: Props) => {
+export const LoadingSquares = ({ styles, speed = 1 }: Props) => {
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
 
   useEffect(() => {
