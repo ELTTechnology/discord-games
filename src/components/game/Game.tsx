@@ -11,6 +11,7 @@ import { Lose } from "./Lose";
 import { Modal } from "../modal/Modal";
 import { Instructions } from "../instructions/Instructions";
 import { PlayersScore } from "./PlayersScore";
+import { YourTurn } from "@/animations/YourTurn";
 
 interface Props {
   data: Data[];
@@ -100,6 +101,10 @@ export const Game = ({
     if (opponentAction) onSelect(opponentAction, true);
   }, [opponentAction]);
 
+  useEffect(() => {
+    if (selectedWords.length === 2) evaluate();
+  }, [selectedWords]);
+
   const onSelect = (data: TileData, fromOpponent = false) => {
     if (!fromOpponent) sendAction(data);
     if (selectedWords.includes(data)) {
@@ -157,10 +162,6 @@ export const Game = ({
     setResult(null);
   };
 
-  useEffect(() => {
-    if (selectedWords.length === 2) evaluate();
-  }, [selectedWords]);
-
   const hideWord = (words: string[]) => {
     setCinnamonSquares((prev) => {
       const newCinnamonSquares = [...prev];
@@ -207,10 +208,10 @@ export const Game = ({
           </div>
         </div>
       </Modal>
-      <div className="my-2 text-white">
-        Select{" "}
-        <span className="font-bold text-amber-500">
-          {isSynonym ? `synonyms!` : `antonyms!`}
+      <div className="text-center my-2 text-white">
+        SELECT
+        <span className="font-black text-amber-500">
+          {isSynonym ? ` SYNONYMS` : ` ANTONYMS`}!
         </span>
       </div>
       <div className="flex flex-col gap-3">
@@ -255,7 +256,7 @@ export const Game = ({
         />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-2">
         <button
           onClick={() => {
             setIsInstructionsAutoClose(false);
@@ -266,6 +267,7 @@ export const Game = ({
           Instructions
         </button>
       </div>
+      {!tileState && (selectedWords.length < 2 && !result) && !instructionsOpen && <YourTurn />}
     </div>
   );
 };
