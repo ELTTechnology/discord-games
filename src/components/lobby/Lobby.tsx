@@ -1,17 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import useGameSocket from "@/hooks/useGameSocket";
 import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
-import wordRiotLogo from '../../assets/word_riot_logo.png';
+import wordRiotLogo from "../../assets/word_riot_logo.png";
 
 // Toggle this for Discord integration
 import { useDiscord } from "@/hooks/useDiscord";
 import { sleep } from "@/utils/sleep";
+import { Exit } from "../exit/Exit";
 
 export const Lobby = () => {
   const [inputCode, setInputCode] = useState("");
@@ -20,6 +21,8 @@ export const Lobby = () => {
   // Toggle this for Discord integration
   const { username, channelName, userAvatar, exitDiscordActivity } =
     useDiscord();
+
+  const [gameEnded, setGameEnded] = useState(false);
 
   const {
     createGame,
@@ -56,6 +59,7 @@ export const Lobby = () => {
   };
 
   const endGame = async () => {
+    console.log(" [Lobby] endGame ");
     // Disconnect game session
     leaveGame();
     // Toggle this for Discord integration
@@ -71,10 +75,10 @@ export const Lobby = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
       <LoadingOverlay
-        isOpen={isSearchingGame && !isGameStarted}
+        isOpen={isSearchingGame && !isGameStarted && !gameEnded}
         loadingText="Searching for a game ... "
       />
-      {!gameCode && !isGameStarted && (
+      {!gameCode && !isGameStarted && !gameEnded && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}
           <div className="my-2 text-white">
@@ -82,7 +86,12 @@ export const Lobby = () => {
           </div>
           <div className="my-2 text-white">Hi, {username}</div>
           <div className="flex justify-center w-full">
-            <Image className="rounded" src={wordRiotLogo} alt="Word Riot Logo" width={320} />
+            <Image
+              className="rounded"
+              src={wordRiotLogo}
+              alt="Word Riot Logo"
+              width={320}
+            />
           </div>
           <button
             onClick={handleCreateGame}
@@ -121,7 +130,7 @@ export const Lobby = () => {
       {gameCode && !isGameStarted && (
         <WaitingForOtherPlayer gameCode={gameCode} />
       )}
-      {isGameStarted && (
+      {(isGameStarted && !gameEnded) && (
         <>
           <Game
             key={gameCode}
@@ -132,6 +141,7 @@ export const Lobby = () => {
             data={[...data].slice(0, 5)}
             sendAction={sendAction}
             endGame={endGame}
+            hasGameEnded={() => setGameEnded(true)}
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}
@@ -144,6 +154,7 @@ export const Lobby = () => {
           />
         </>
       )}
+      {gameEnded && <Exit exit={endGame} />}
     </div>
   );
 };

@@ -17,6 +17,7 @@ interface Props {
   data: Data[];
   sendAction: (data: TileData) => void;
   endGame: () => void;
+  hasGameEnded: () => void;
   opponentAction: TileData | null;
   playerNumber: number | undefined;
   isSynonym: boolean;
@@ -58,6 +59,7 @@ export const Game = ({
   data,
   sendAction,
   endGame,
+  hasGameEnded,
   opponentAction,
   isSynonym,
   playerNumber,
@@ -176,6 +178,7 @@ export const Game = ({
 
   const onAnimationEnd = async () => {
     console.log(" --------- onAnimationEnd ");
+    hasGameEnded();
     await sleep(1920);
     endGame();
   };
