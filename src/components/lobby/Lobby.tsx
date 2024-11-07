@@ -1,11 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from 'next/image';
 import useGameSocket from "@/hooks/useGameSocket";
 import { Game } from "../game/Game";
 import { data } from "../game/data";
 import { nanoid } from "nanoid";
 import { WaitingForOtherPlayer } from "./WaitingForOtherPlayer";
 import { LoadingOverlay } from "../loadingOverlay/LoadingOverlay";
+import wordRiotLogo from '../../assets/word_riot_logo.png';
 
 // Toggle this for Discord integration
 import { useDiscord } from "@/hooks/useDiscord";
@@ -16,7 +18,8 @@ export const Lobby = () => {
   // Generate specific session/user ID
   const [sessionId] = useState(nanoid(9));
   // Toggle this for Discord integration
-  const { username, channelName, userAvatar, exitDiscordActivity } = useDiscord();
+  const { username, channelName, userAvatar, exitDiscordActivity } =
+    useDiscord();
 
   const {
     createGame,
@@ -74,8 +77,13 @@ export const Lobby = () => {
       {!gameCode && !isGameStarted && (
         <div className="flex flex-col items-center space-y-4">
           {/* Toggle this for Discord integration */}
-          <div className="my-2 text-white">Activity Channel: {channelName ?? '-'}</div>
+          <div className="my-2 text-white">
+            Activity Channel: {channelName ?? "-"}
+          </div>
           <div className="my-2 text-white">Hi, {username}</div>
+          <div className="flex justify-center w-full">
+            <Image className="rounded" src={wordRiotLogo} alt="Word Riot Logo" width={320} />
+          </div>
           <button
             onClick={handleCreateGame}
             className="bg-green-500 w-full text-white py-2 px-4 rounded"
@@ -87,7 +95,7 @@ export const Lobby = () => {
           {availableGameCode && (
             <div className="flex space-x-2">
               <span className="text-emerald-500">Available game found! </span>
-              <span className="text-white" >{availableGameCode}</span>
+              <span className="text-white">{availableGameCode}</span>
             </div>
           )}
 
@@ -127,7 +135,11 @@ export const Lobby = () => {
             opponentAction={opponentAction}
             playerNumber={playerNumber}
             isSynonym={isSynonym}
-            userDetails={{ name: username ?? '', avatar: userAvatar ?? '', isSynonym }}
+            userDetails={{
+              name: username ?? "",
+              avatar: userAvatar ?? "",
+              isSynonym,
+            }}
             opponentDetails={opponentDetails}
           />
         </>
