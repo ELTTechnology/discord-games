@@ -34,6 +34,7 @@ export const useDiscord = () => {
 
   const exitDiscordActivity = async () => {
     if (!discordSDK) return;
+    console.log(" [useDiscord] exitDiscordActivity ");
     await discordSDK.close(1000, "Game completed");
   }
 
