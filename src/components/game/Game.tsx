@@ -1,7 +1,7 @@
 "use client";
 import { shuffle } from "lodash";
 import { Data, TileData, SelectionResult, User } from "./types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tile } from "./Tile";
 import { AnimatePresence } from "framer-motion";
 import { sleep } from "../../utils/sleep";
@@ -12,7 +12,6 @@ import { Modal } from "../modal/Modal";
 import { Instructions } from "../instructions/Instructions";
 import { PlayersScore } from "./PlayersScore";
 import { YourTurn } from "@/animations/YourTurn";
-import { nanoid } from "nanoid";
 
 interface Props {
   data: Data[];
@@ -86,10 +85,6 @@ export const Game = ({
   }, []);
 
   useEffect(() => {
-    console.log(" [Game] tileState: ", tileState);
-  }, [tileState]);
-
-  useEffect(() => {
     (async () => {
       if (antonymsAnswered + synonymsAnswered === 5) {
         console.log(" --------- Game Completed ");
@@ -105,6 +100,10 @@ export const Game = ({
   useEffect(() => {
     if (opponentAction) onSelect(opponentAction, true);
   }, [opponentAction]);
+
+  useEffect(() => {
+    if (selectedWords.length === 2) evaluate();
+  }, [selectedWords]);
 
   const onSelect = (data: TileData, fromOpponent = false) => {
     if (!fromOpponent) sendAction(data);
@@ -162,10 +161,6 @@ export const Game = ({
     setSelectedWords([]);
     setResult(null);
   };
-
-  useEffect(() => {
-    if (selectedWords.length === 2) evaluate();
-  }, [selectedWords]);
 
   const hideWord = (words: string[]) => {
     setCinnamonSquares((prev) => {
@@ -272,7 +267,7 @@ export const Game = ({
           Instructions
         </button>
       </div>
-      {!tileState && <YourTurn />}
+      {!tileState && (selectedWords.length < 2 && !result) && !instructionsOpen && <YourTurn />}
     </div>
   );
 };
