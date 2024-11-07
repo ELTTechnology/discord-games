@@ -1,7 +1,7 @@
 "use client";
 import { shuffle } from "lodash";
 import { Data, TileData, SelectionResult, User } from "./types";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Tile } from "./Tile";
 import { AnimatePresence } from "framer-motion";
 import { sleep } from "../../utils/sleep";
