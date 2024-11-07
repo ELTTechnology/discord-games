@@ -11,6 +11,8 @@ import { Lose } from "./Lose";
 import { Modal } from "../modal/Modal";
 import { Instructions } from "../instructions/Instructions";
 import { PlayersScore } from "./PlayersScore";
+import { YourTurn } from "@/animations/YourTurn";
+import { nanoid } from "nanoid";
 
 interface Props {
   data: Data[];
@@ -82,6 +84,10 @@ export const Game = ({
       setInstructionsOpen(false);
     })();
   }, []);
+
+  useEffect(() => {
+    console.log(" [Game] tileState: ", tileState);
+  }, [tileState]);
 
   useEffect(() => {
     (async () => {
@@ -207,10 +213,10 @@ export const Game = ({
           </div>
         </div>
       </Modal>
-      <div className="my-2 text-white">
-        Select{" "}
-        <span className="font-bold text-amber-500">
-          {isSynonym ? `synonyms!` : `antonyms!`}
+      <div className="text-center my-2 text-white">
+        SELECT
+        <span className="font-black text-amber-500">
+          {isSynonym ? ` SYNONYMS` : ` ANTONYMS`}!
         </span>
       </div>
       <div className="flex flex-col gap-3">
@@ -255,7 +261,7 @@ export const Game = ({
         />
       </div>
 
-      <div className="mt-8">
+      <div className="mt-2">
         <button
           onClick={() => {
             setIsInstructionsAutoClose(false);
@@ -266,6 +272,7 @@ export const Game = ({
           Instructions
         </button>
       </div>
+      {!tileState && <YourTurn />}
     </div>
   );
 };

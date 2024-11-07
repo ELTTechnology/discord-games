@@ -7,6 +7,7 @@ interface Props {
 }
 
 export const LoadingOverlay = ({ loadingText, isOpen }: Props) => {
+
   return (
     <>
       {isOpen && (
